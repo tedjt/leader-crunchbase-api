@@ -1,0 +1,23 @@
+{
+  "name": "leader-crunchbase-api",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "A Crunchbase company scraper middleware for leader",
+  "keywords": [
+    "leader",
+    "LinkedIn",
+    "company",
+    "scraper",
+    "middleware"
+  ],
+  "dependencies": {
+    "debug": "~0.7.4",
+    "extend": "~1.2.1",
+    "obj-case": "0.0.3",
+    "map": "git://github.com/ivolo/map"
+  },
+  "devDependencies": {
+    "mocha": "~1.15.1",
+    "crunchbase-api": "~1.0.0"
+  }
+}
