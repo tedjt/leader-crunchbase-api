@@ -25,7 +25,7 @@ function middleware (crunchbase) {
     if (!name) return next();
     debug('scraping Crunchbase company profile with name %s ..', name);
     crunchbase.company(name, function (err, profile) {
-      if (err) return next(err);
+      if (err) return next();
       if (!profile) return next();
       extend(true, context, { crunchbase: { company: { api : profile }}});
       details(profile, person);
