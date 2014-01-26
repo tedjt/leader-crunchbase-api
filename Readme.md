@@ -1,5 +1,5 @@
 
-# leader-crunchbase-company-scraper
+# leader-crunchbase-api
 
   A [leader](https://github.com/ivolo/leader) plugin for the [Crunchbase](https://crunchbase.com/) company API. Get a Crunchbase API key [here](http://developer.crunchbase.com/).
 
