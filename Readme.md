@@ -1,27 +1,23 @@
 
 # leader-crunchbase-company-scraper
 
-  A [Crunchbase](https://crunchbase.com/) company scraper plugin for [leader](https://github.com/ivolo/leader).
+  A [leader](https://github.com/ivolo/leader) plugin for the [Crunchbase](https://crunchbase.com/) company API. Get a Crunchbase API key [here](http://developer.crunchbase.com/).
 
 ## Example
 
 ```js
 var Leader = require('leader');
-var CrunchbaseApi = require('crunchbase-api');
-var crunchbaseCompany = require('leader-crunchbase-api');
+var CrunchBase = require('leader-crunchbase-api');
 
-var leader = Leader();
-
-var crunchbase = new CrunchbaseApi();
-crunchbase.setKey(apiKey);
-leader.use(crunchbaseCompany(crunchbase))
+var leader = Leader()
+  .use(CrunchBase('CRUNCHBASE_API_KEY'))
   .populate({ company: { name: 'segment.io'}}, function(err, person) {
-    console.log(person.company.crunchbase_url);
+    // ..
 });
 ```
 
 ## API
 
-#### crunchbaseCompany(crunchbase)
+#### CrunchBase(apiKey)
 
-  Return a Crunchbase api plugin for leader.
+  Return a Leader plugin for the CrunchBase company API.

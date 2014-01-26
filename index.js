@@ -3,24 +3,29 @@ var debug = require('debug')('leader:crunchbase:api');
 var map = require('map');
 var extend = require('extend');
 var objCase = require('obj-case');
+var CrunchBase = require('crunchbase-api');
 
 /**
- * Expose the leader `middleware`.
+ * Create a new leader plugin.
+ *
+ * @params {String} apiKey
+ * @returns {Object}
  */
 
-module.exports = function (crunchbase) {
-  return { fn: middleware(crunchbase), wait: wait };
+module.exports = function (apiKey) {
+  return { fn: middleware(apiKey), wait: wait };
 };
 
 /**
- * Create a crunchbase company api middleware.
+ * Create a CrunchBase API leader plugin.
  *
- * @return {crunchbaseApi} crunchbase
+ * @return {String} apiKey
  * @return {Function}
  */
 
-function middleware (crunchbase) {
-  return function companyApi (person, context, next) {
+function middleware (apiKey) {
+  var crunchbase = CrunchBase(apiKey);
+  return function crunchbaseApi (person, context, next) {
     var name = getCompanyName(person, context);
     if (!name) return next();
     debug('scraping Crunchbase company profile with name %s ..', name);
@@ -46,15 +51,15 @@ function details (profile, person) {
   var company = person.company;
   extend(true, company, map(profile, {
     'tags': 'tag_list',
-    'employee_count': 'number_of_employees',
+    'employees': 'number_of_employees',
     'category': 'category_code',
-    'crunchbase_url': 'crunchbase_url',
+    'crunchbase.url': 'crunchbase_url',
     'funding': 'total_money_raised'
   }));
 }
 
 /**
- * Wait until we have a company name
+ * Wait until we have a company name.
  *
  * @param {Object} context
  * @param {Object} person
@@ -62,13 +67,13 @@ function details (profile, person) {
  */
 
 function wait (person, context) {
-  var companyName = getCompanyName(person, context);
-  return objCase(person, 'linkedin.summary') || 
-    (companyName && companyName != 'Google');
+  var company = getCompanyName(person, context);
+  return objCase(person, 'linkedin.summary') ||
+    (company && company !== 'Google');
 }
 
 /**
- * Get the crunchbase company name.
+ * Get the company name.
  *
  * @param {Object} context
  * @param {Object} person
