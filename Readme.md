@@ -16,6 +16,26 @@ var leader = Leader()
 });
 ```
 
+It will search Crunchbase for the following keys: `company.name`, `domain.name`, or `linkedin.summary`. 
+
+And it will add the following to the `person`:
+
+```js
+{
+  // ..
+  company: {
+    name: 'segment.io',
+    tags: 'analytics, api, web-analytics, developer, mixpanel, google-analytics, kissmetric... ',
+    employees: 8,
+    category: 'analytics',
+    crunchbase: {
+      url: 'http://www.crunchbase.com/company/segment-io'
+    },
+    funding: '$600k'
+  }
+}
+```
+
 ## API
 
 #### CrunchBase(apiKey)

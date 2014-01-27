@@ -26,15 +26,15 @@ module.exports = function (apiKey) {
 function middleware (apiKey) {
   var crunchbase = CrunchBase(apiKey);
   return function crunchbaseApi (person, context, next) {
-    var name = getCompanyName(person, context);
-    if (!name) return next();
-    debug('scraping Crunchbase company profile with name %s ..', name);
-    crunchbase.company(name, function (err, profile) {
+    var query = getSearchTerm(person, context);
+    if (!query) return next();
+    debug('scraping CrunchBase with query %s ..', query);
+    crunchbase.company(query, function (err, profile) {
       if (err) return next();
       if (!profile) return next();
       extend(true, context, { crunchbase: { company: { api : profile }}});
       details(profile, person);
-      debug('crunchbase company profile scraped from name %s', name);
+      debug('Got CrunchBase company profile for query %s', query);
       next();
     });
   };
@@ -59,7 +59,7 @@ function details (profile, person) {
 }
 
 /**
- * Wait until we have a company name.
+ * Wait until we have an interesting search term.
  *
  * @param {Object} context
  * @param {Object} person
@@ -67,9 +67,22 @@ function details (profile, person) {
  */
 
 function wait (person, context) {
+  return getSearchTerm(person, context);
+}
+
+/**
+ * Get the CrunchBase search term.
+ *
+ * @param {Object} person
+ * @param {Object} context
+ * @return {String}
+ */
+
+function getSearchTerm (person, context) {
   var company = getCompanyName(person, context);
-  return objCase(person, 'linkedin.summary') ||
-    (company && company !== 'Google');
+  var domain = getInterestingDomain(person, context);
+  var summary = getLinkedinSummary(person, context);
+  return company || domain || summary;
 }
 
 /**
@@ -83,3 +96,31 @@ function wait (person, context) {
 function getCompanyName (person, context) {
   return objCase(person, 'company.name');
 }
+
+/**
+ * Get an interesting domain.
+ *
+ * @param {Object} context
+ * @param {Object} person
+ * @return {String}
+ */
+
+function getInterestingDomain (person, context) {
+  if (person.domain && person.domain.interesting)
+    return person.domain.name;
+  else
+    return null;
+}
+
+/**
+ * Get a linkedin summary.
+ *
+ * @param {Object} context
+ * @param {Object} person
+ * @return {String}
+ */
+
+function getLinkedinSummary (person, context) {
+  return objCase(person, 'linkedin.summary');
+}
+
