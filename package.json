@@ -18,6 +18,7 @@
     "map": "git://github.com/ivolo/map",
     "crunchbase-api": "git://github.com/ivolo/crunchbase-api"
   },
+
   "devDependencies": {
     "mocha": "~1.15.1"
   }
