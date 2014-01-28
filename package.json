@@ -18,6 +18,6 @@
   },
   "devDependencies": {
     "mocha": "~1.15.1",
-    "crunchbase-api": "~1.0.0"
+    "crunchbase-api": "git://github.com/tedjt/crunchbase-api"
   }
 }
