@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "repository": "git://github.com/tedjt/leader-crunchbase-api.git",
   "license": "MIT",
-  "description": "A Crunchbase company scraper middleware for leader",
+  "description": "A Crunchbase API plugin for leader",
   "keywords": [
     "leader",
     "LinkedIn",
@@ -15,10 +15,10 @@
     "debug": "~0.7.4",
     "extend": "~1.2.1",
     "obj-case": "0.0.3",
-    "map": "git://github.com/ivolo/map"
+    "map": "git://github.com/ivolo/map",
+    "crunchbase-api": "git://github.com/ivolo/crunchbase-api"
   },
   "devDependencies": {
-    "mocha": "~1.15.1",
-    "crunchbase-api": "git://github.com/tedjt/crunchbase-api"
+    "mocha": "~1.15.1"
   }
 }
