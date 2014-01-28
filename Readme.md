@@ -1,27 +1,43 @@
 
-# leader-crunchbase-company-scraper
+# leader-crunchbase-api
 
-  A [Crunchbase](https://crunchbase.com/) company scraper plugin for [leader](https://github.com/ivolo/leader).
+  A [leader](https://github.com/ivolo/leader) plugin for the [Crunchbase](https://crunchbase.com/) company API. Get a Crunchbase API key [here](http://developer.crunchbase.com/).
 
 ## Example
 
 ```js
 var Leader = require('leader');
-var CrunchbaseApi = require('crunchbase-api');
-var crunchbaseCompany = require('leader-crunchbase-api');
+var CrunchBase = require('leader-crunchbase-api');
 
-var leader = Leader();
-
-var crunchbase = new CrunchbaseApi();
-crunchbase.setKey(apiKey);
-leader.use(crunchbaseCompany(crunchbase))
+var leader = Leader()
+  .use(CrunchBase('CRUNCHBASE_API_KEY'))
   .populate({ company: { name: 'segment.io'}}, function(err, person) {
-    console.log(person.company.crunchbase_url);
+    // ..
 });
+```
+
+It will search Crunchbase for the following keys: `company.name`, `domain.name`, or `linkedin.summary`. 
+
+And it will add the following to the `person`:
+
+```js
+{
+  // ..
+  company: {
+    name: 'segment.io',
+    tags: 'analytics, api, web-analytics, developer, mixpanel, google-analytics, kissmetric... ',
+    employees: 8,
+    category: 'analytics',
+    crunchbase: {
+      url: 'http://www.crunchbase.com/company/segment-io'
+    },
+    funding: '$600k'
+  }
+}
 ```
 
 ## API
 
-#### crunchbaseCompany(crunchbase)
+#### CrunchBase(apiKey)
 
-  Return a Crunchbase api plugin for leader.
+  Return a Leader plugin for the CrunchBase company API.
