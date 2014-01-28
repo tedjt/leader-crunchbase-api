@@ -1,6 +1,7 @@
 {
   "name": "leader-crunchbase-api",
   "version": "1.0.0",
+  "repository": "git://github.com/tedjt/leader-crunchbase-api.git",
   "license": "MIT",
   "description": "A Crunchbase company scraper middleware for leader",
   "keywords": [
