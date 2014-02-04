@@ -70,7 +70,7 @@ function details (profile, person) {
     });
   }
 
-  var crunchimage = profile.image.available_sizes;
+  var crunchimage = profile.image && profile.image.available_sizes;
   if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
     company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
   }
