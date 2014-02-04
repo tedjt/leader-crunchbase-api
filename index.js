@@ -69,6 +69,11 @@ function details (profile, person) {
       person.company.links.push({ title: item.title, link: item.external_url });
     });
   }
+
+  var crunchimage = profile.image.available_sizes;
+  if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
+    company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
+  }
 }
 
 /**
