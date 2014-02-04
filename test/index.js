@@ -24,6 +24,7 @@ describe('leader-crunchbase-api', function () {
       if (err) return done(err);
       assert(person);
       assert(person.company.crunchbase.url === 'http://www.crunchbase.com/company/segment-io');
+      assert(person.company.image == 'http://www.crunchbase.com/assets/images/resized/0023/1718/231718v2-max-150x150.png');
       done();
     });
   });

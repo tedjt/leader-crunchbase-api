@@ -56,6 +56,11 @@ function details (profile, person) {
     'crunchbase.url': 'crunchbase_url',
     'funding': 'total_money_raised'
   }));
+
+  var crunchimage = profile.image.available_sizes;
+  if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
+    company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
+  }
 }
 
 /**
