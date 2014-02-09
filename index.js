@@ -60,7 +60,7 @@ function details (profile, person) {
 
   var crunchimage = profile.image && profile.image.available_sizes;
   if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
-    company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
+    person.company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
   }
 
   if (profile.external_links) {
@@ -68,11 +68,6 @@ function details (profile, person) {
     profile.external_links.forEach(function (item) {
       person.company.links.push({ title: item.title, link: item.external_url });
     });
-  }
-
-  var crunchimage = profile.image && profile.image.available_sizes;
-  if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
-    company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
   }
 }
 
