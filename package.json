@@ -12,11 +12,12 @@
     "middleware"
   ],
   "dependencies": {
+    "crunchbase-api": "git://github.com/ivolo/crunchbase-api",
     "debug": "~0.7.4",
     "extend": "~1.2.1",
-    "obj-case": "0.0.3",
+    "levenshtein": "~1.0",
     "map": "git://github.com/ivolo/map",
-    "crunchbase-api": "git://github.com/ivolo/crunchbase-api"
+    "obj-case": "0.0.3"
   },
 
   "devDependencies": {

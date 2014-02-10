@@ -1,9 +1,9 @@
-
 var debug = require('debug')('leader:crunchbase:api');
 var map = require('map');
 var extend = require('extend');
 var objCase = require('obj-case');
 var CrunchBase = require('crunchbase-api');
+var Levenshtein = require('levenshtein');
 
 /**
  * Create a new leader plugin.
@@ -13,7 +13,7 @@ var CrunchBase = require('crunchbase-api');
  */
 
 module.exports = function (apiKey) {
-  return { fn: middleware(apiKey), wait: wait };
+  return { fn: middleware(apiKey), wait: wait, test: {mergeProfile: mergeProfile} };
 };
 
 /**
@@ -33,7 +33,9 @@ function middleware (apiKey) {
       if (err) return next();
       if (!profile) return next();
       extend(true, context, { crunchbase: { company: { api : profile }}});
-      details(profile, person);
+      if (mergeProfile(profile, query)) {
+        details(profile, person);
+      }
       debug('Got CrunchBase company profile for query %s', query);
       next();
     });
@@ -72,6 +74,24 @@ function details (profile, person) {
 }
 
 /**
+ * Sanity check the Crunchbase profile
+ *
+ * @param {Object} profile
+ * @param {String} query
+ */
+
+function mergeProfile (profile, query) {
+  var name = objCase(profile, 'name');
+  if (name) {
+    var lev = new Levenshtein(name, query);
+    if (lev.distance < 10) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Wait until we have an interesting search term.
  *
  * @param {Object} context
@@ -94,8 +114,7 @@ function wait (person, context) {
 function getSearchTerm (person, context) {
   var company = getCompanyName(person, context);
   var domain = getInterestingDomain(person, context);
-  var summary = getLinkedinSummary(person, context);
-  return company || domain || summary;
+  return company || domain;
 }
 
 /**
@@ -124,16 +143,3 @@ function getInterestingDomain (person, context) {
   else
     return null;
 }
-
-/**
- * Get a linkedin summary.
- *
- * @param {Object} context
- * @param {Object} person
- * @return {String}
- */
-
-function getLinkedinSummary (person, context) {
-  return objCase(person, 'linkedin.summary');
-}
-

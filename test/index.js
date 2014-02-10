@@ -17,6 +17,16 @@ describe('leader-crunchbase-api', function () {
     assert(crunchbase.wait(person, context));
   });
 
+  it.only('should merge profile if the name is similar', function () {
+    var profile = {name: 'Machine Zone, Inc.'};
+    assert(crunchbase.test.mergeProfile(profile, 'MachineZone'));
+  });
+
+  it('should not merge profile if the name is not similar', function () {
+    var profile = {name: 'Homes for sale in Franklin TN'};
+    assert(!crunchbase.test.mergeProfile(profile, 'Premier Pacific Group'));
+  });
+
   it('should be able to resolve a valid crunchbase company profile', function (done) {
     var person = { company: { name: 'segment.io'}};
     var context = {};
