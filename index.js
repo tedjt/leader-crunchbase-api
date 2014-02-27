@@ -52,7 +52,7 @@ function middleware (apiKey) {
 function details (profile, person) {
   person.company = person.company || {};
   extend(true, person.company, map(profile, {
-    'name': 'name'
+    'name': 'name',
     'tags': 'tag_list',
     'employees': 'number_of_employees',
     'category': 'category_code',
