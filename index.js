@@ -1,4 +1,4 @@
-var debug = require('debug')('leader:crunchbase:api');
+jvar debug = require('debug')('leader:crunchbase:api');
 var map = require('map');
 var extend = require('extend');
 var objCase = require('obj-case');
@@ -32,8 +32,8 @@ function middleware (apiKey) {
     crunchbase.company(query, function (err, profile) {
       if (err) return next();
       if (!profile) return next();
-      extend(true, context, { crunchbase: { company: { api : profile }}});
       if (mergeProfile(profile, query)) {
+        extend(true, context, { crunchbase: { company: { api : profile }}});
         details(profile, person);
       }
       debug('Got CrunchBase company profile for query %s', query);
