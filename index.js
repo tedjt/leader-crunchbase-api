@@ -1,4 +1,4 @@
-jvar debug = require('debug')('leader:crunchbase:api');
+var debug = require('debug')('leader:crunchbase:api');
 var map = require('map');
 var extend = require('extend');
 var objCase = require('obj-case');
