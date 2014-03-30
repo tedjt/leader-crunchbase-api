@@ -33,10 +33,12 @@ function middleware (apiKey) {
       if (err) return next();
       if (!profile) return next();
       if (mergeProfile(profile, query)) {
+        debug('Got CrunchBase company profile for query %s', query);
         extend(true, context, { crunchbase: { company: { api : profile }}});
         details(profile, person);
+      } else {
+        debug('Not storing crunchbase profile with name %s for query %s', profile.name, query);
       }
-      debug('Got CrunchBase company profile for query %s', query);
       next();
     });
   };
