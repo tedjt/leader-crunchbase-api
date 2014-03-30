@@ -1,5 +1,6 @@
 
 var assert = require('assert');
+var should = require('should');
 var plugin = require('..');
 
 describe('leader-crunchbase-api', function () {
@@ -17,7 +18,7 @@ describe('leader-crunchbase-api', function () {
     assert(crunchbase.wait(person, context));
   });
 
-  it.only('should merge profile if the name is similar', function () {
+  it('should merge profile if the name is similar', function () {
     var profile = {name: 'Machine Zone, Inc.'};
     assert(crunchbase.test.mergeProfile(profile, 'MachineZone'));
   });
@@ -35,6 +36,31 @@ describe('leader-crunchbase-api', function () {
       assert(person);
       assert(person.company.crunchbase.url === 'http://www.crunchbase.com/company/segment-io');
       assert(person.company.image == 'http://www.crunchbase.com/assets/images/resized/0023/1718/231718v2-max-150x150.png');
+      done();
+    });
+  });
+
+  it('should be able to resolve a valid crunchbase company profile for financial institutions', function (done) {
+    var person = { company: { name: 'Khosla Ventures'}};
+    var context = {};
+    crunchbase.fn(person, context, function (err) {
+      if (err) return done(err);
+      assert(person);
+      person.company.crunchbase.url.should.equal('http://www.crunchbase.com/financial-organization/khosla-ventures');
+      person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0000/1507/1507v2-max-150x150.png');
+      done();
+    });
+  });
+
+  it('should be able to resolve a valid crunchbase company profile from url', function (done) {
+    var person = { company: { name: 'IGate',  crunchbase: {url: 'http://www.crunchbase.com/company/igate-patni'}}};
+    var context = {};
+    crunchbase.fn(person, context, function (err) {
+      if (err) return done(err);
+      assert(person);
+      person.company.crunchbase.url.should.equal('http://www.crunchbase.com/company/igate-patni');
+      person.company.employees.should.equal(15000);
+      person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0014/9354/149354v2-max-150x150.jpg');
       done();
     });
   });

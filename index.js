@@ -26,12 +26,17 @@ module.exports = function (apiKey) {
 function middleware (apiKey) {
   var crunchbase = CrunchBase(apiKey);
   return function crunchbaseApi (person, context, next) {
-    var query = getSearchTerm(person, context);
-    if (!query) return next();
-    debug('scraping CrunchBase with query %s ..', query);
-    crunchbase.company(query, function (err, profile) {
+    var crunchbaseUrl = getCrunchbaseUrl(person);
+    var query = null;
+    if (!crunchbaseUrl) {
+      query = getSearchTerm(person, context);
+      if (!query) return next();
+    }
+    // define callback
+    var cb = function (err, profile) {
       if (err) return next();
       if (!profile) return next();
+      console.log('Query: %s, crunchbaseUrl: %s ', query, crunchbaseUrl);
       if (mergeProfile(profile, query)) {
         debug('Got CrunchBase company profile for query %s', query);
         extend(true, context, { crunchbase: { company: { api : profile }}});
@@ -40,7 +45,20 @@ function middleware (apiKey) {
         debug('Not storing crunchbase profile with name %s for query %s', profile.name, query);
       }
       next();
-    });
+    };
+
+    // decide to search with query or crunchbase url
+    if (crunchbaseUrl) {
+      var splitUrl = crunchbaseUrl.split('/').slice(-2);
+      var namespace = splitUrl[0];
+      var permalink = splitUrl[1];
+      query = getSearchTerm(person, context) || permalink;
+      debug('scraping CrunchBase with permalink %s ..', permalink);
+      crunchbase.permalink(permalink, namespace, cb);
+    } else {
+      debug('scraping CrunchBase with query %s ..', query);
+      crunchbase.company(query, cb);
+    }
   };
 }
 
@@ -103,7 +121,11 @@ function mergeProfile (profile, query) {
  */
 
 function wait (person, context) {
-  return getSearchTerm(person, context);
+  return getCrunchbaseUrl(person) || getSearchTerm(person, context);
+}
+
+function getCrunchbaseUrl(person) {
+  return objCase(person, 'company.crunchbase.url');
 }
 
 /**

@@ -19,8 +19,8 @@
     "map": "git://github.com/ivolo/map",
     "obj-case": "0.0.3"
   },
-
   "devDependencies": {
-    "mocha": "~1.15.1"
+    "mocha": "~1.15.1",
+    "should": "~3.2.0"
   }
 }
