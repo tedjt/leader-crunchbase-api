@@ -4,6 +4,7 @@ var should = require('should');
 var plugin = require('..');
 
 describe('leader-crunchbase-api', function () {
+  this.timeout(1000 * 60);
 
   var crunchbase = plugin('9x75rxx54sqpsrycunct2ryq');
 

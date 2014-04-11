@@ -1,9 +1,9 @@
 var debug = require('debug')('leader:crunchbase:api');
 var map = require('map');
 var extend = require('extend');
-var objCase = require('obj-case');
 var CrunchBase = require('crunchbase-api');
-var Levenshtein = require('levenshtein');
+var leaderUtils = require('leader-utils');
+var objCase = leaderUtils.objcase;
 
 /**
  * Create a new leader plugin.
@@ -81,9 +81,9 @@ function details (profile, person) {
     'twitter.username': 'twitter_username'
   }));
 
-  var crunchimage = profile.image && profile.image.available_sizes;
-  if (crunchimage && crunchimage.length && crunchimage[0].length > 1) {
-    person.company.image = 'http://www.crunchbase.com/' + crunchimage[0][1];
+  var crunchimage = objCase(profile, 'image.available_sizes[0][1]');
+  if (crunchimage) {
+    person.company.image = 'http://www.crunchbase.com/' + crunchimage;
   }
 
   if (profile.external_links) {
@@ -102,12 +102,8 @@ function details (profile, person) {
  */
 
 function mergeProfile (profile, query) {
-  var name = objCase(profile, 'name');
-  if (name) {
-    var lev = new Levenshtein(name, query);
-    if (lev.distance < 10) {
-      return true;
-    }
+  if (profile.name) {
+    return leaderUtils.accurateTitle(profile.name, query);
   }
   return false;
 }
@@ -137,34 +133,8 @@ function getCrunchbaseUrl(person) {
  */
 
 function getSearchTerm (person, context) {
-  var company = getCompanyName(person, context);
-  var domain = getInterestingDomain(person, context);
-  return company || domain;
-}
-
-/**
- * Get the company name.
- *
- * @param {Object} context
- * @param {Object} person
- * @return {String}
- */
-
-function getCompanyName (person, context) {
-  return objCase(person, 'company.name');
-}
-
-/**
- * Get an interesting domain.
- *
- * @param {Object} context
- * @param {Object} person
- * @return {String}
- */
-
-function getInterestingDomain (person, context) {
-  if (person.domain && !person.domain.disposable && !person.domain.personal)
-    return person.domain.name;
-  else
-    return null;
+  var company = leaderUtils.getCompanyName(person);
+  var domain = leaderUtils.getInterestingDomain(person);
+  var companyDomain = leaderUtils.getCompanyDomain(person);
+  return companyDomain || domain || company;
 }
