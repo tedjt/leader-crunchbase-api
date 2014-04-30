@@ -34,9 +34,11 @@ describe('leader-crunchbase-api', function () {
     var context = {};
     crunchbase.fn(person, context, function (err) {
       if (err) return done(err);
+      console.log(person);
       assert(person);
       assert(person.company.crunchbase.url === 'http://www.crunchbase.com/company/segment-io');
-      assert(person.company.image == 'http://www.crunchbase.com/assets/images/resized/0023/1718/231718v2-max-150x150.png');
+      //person.company.image.should.eql('http://www.crunchbase.com/assets/images/resized/0023/1718/231718v2-max-150x150.png');
+      person.company.image.should.eql('http://res.cloudinary.com/crunchbase-production/image/upload/c_pad,h_98,w_98/v1397196203/6c25e58fabe57e3705b985cf85bc401d.png');
       done();
     });
   });
@@ -46,9 +48,11 @@ describe('leader-crunchbase-api', function () {
     var context = {};
     crunchbase.fn(person, context, function (err) {
       if (err) return done(err);
+      console.log(person);
       assert(person);
       person.company.crunchbase.url.should.equal('http://www.crunchbase.com/financial-organization/khosla-ventures');
-      person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0000/1507/1507v2-max-150x150.png');
+      //person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0000/1507/1507v2-max-150x150.png');
+      person.company.image.should.equal('http://res.cloudinary.com/crunchbase-production/image/upload/c_pad,h_98,w_98/v1397178514/1ff1b345e5199452a5d37661ec0e7682.png');
       done();
     });
   });
@@ -58,10 +62,12 @@ describe('leader-crunchbase-api', function () {
     var context = {};
     crunchbase.fn(person, context, function (err) {
       if (err) return done(err);
+      console.log(person);
       assert(person);
       person.company.crunchbase.url.should.equal('http://www.crunchbase.com/company/igate-patni');
       person.company.employees.should.equal(15000);
-      person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0014/9354/149354v2-max-150x150.jpg');
+      //person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0014/9354/149354v2-max-150x150.jpg');
+      person.company.image.should.equal('http://res.cloudinary.com/crunchbase-production/image/upload/c_pad,h_98,w_98/v1397198699/c3b7b0b2c00f5727c4f31f66efc0baf5.jpg');
       done();
     });
   });

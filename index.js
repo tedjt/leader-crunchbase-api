@@ -4,6 +4,7 @@ var extend = require('extend');
 var CrunchBase = require('crunchbase-api');
 var leaderUtils = require('leader-utils');
 var objCase = leaderUtils.objcase;
+var Crawler = require('htmlcrawler');
 
 /**
  * Create a new leader plugin.
@@ -29,6 +30,7 @@ module.exports.test = {
 
 function middleware (apiKey) {
   var crunchbase = CrunchBase(apiKey);
+  var crawler = new Crawler();
   return function crunchbaseApi (person, context, next) {
     var crunchbaseUrl = getCrunchbaseUrl(person);
     var query = null;
@@ -45,12 +47,17 @@ function middleware (apiKey) {
 
       if (accurateName(profile, query, isDomain)) {
         debug('Got CrunchBase company profile for query %s', query);
-        extend(true, context, { crunchbase: { company: { api : profile }}});
-        details(profile, person);
+        // have to load crunchbase image from cdn
+        crawler.load(profile.crunchbase_url, function(err, $) {
+          profile.cdn_image = $('img.entity-info-card-primary-image').attr('src');
+          extend(true, context, { crunchbase: { company: { api : profile }}});
+          details(profile, person);
+          next();
+        });
       } else {
         debug('Not storing crunchbase profile with name %s for query %s', profile.name, query);
+        next();
       }
-      next();
     };
 
     // decide to search with query or crunchbase url
@@ -89,9 +96,13 @@ function details (profile, person) {
     'twitter.username': 'twitter_username'
   }));
 
-  var crunchimage = objCase(profile, 'image.available_sizes[0][1]');
-  if (crunchimage) {
-    person.company.image = 'http://www.crunchbase.com/' + crunchimage;
+  if (profile.cdn_image) {
+    person.company.image = profile.cdn_image;
+  } else {
+    var crunchimage = objCase(profile, 'image.available_sizes[0][1]');
+    if (crunchimage) {
+      person.company.image = 'http://www.crunchbase.com/' + crunchimage;
+    }
   }
 
   if (profile.external_links) {

@@ -15,6 +15,7 @@
     "crunchbase-api": "git://github.com/tedjt/crunchbase-api",
     "debug": "~0.7.4",
     "extend": "~1.2.1",
+    "htmlcrawler": "git://github.com/tedjt/htmlcrawler",
     "leader-utils": "git://github.com/tedjt/leader-utils",
     "map": "git://github.com/ivolo/map"
   },
