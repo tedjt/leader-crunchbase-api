@@ -13,7 +13,11 @@ var objCase = leaderUtils.objcase;
  */
 
 module.exports = function (apiKey) {
-  return { fn: middleware(apiKey), wait: wait, test: {mergeProfile: mergeProfile} };
+  return { fn: middleware(apiKey), wait: wait };
+};
+
+module.exports.test = {
+  accurateName: accurateName
 };
 
 /**
@@ -28,6 +32,7 @@ function middleware (apiKey) {
   return function crunchbaseApi (person, context, next) {
     var crunchbaseUrl = getCrunchbaseUrl(person);
     var query = null;
+    var isDomain = false;
     if (!crunchbaseUrl) {
       query = getSearchTerm(person, context);
       if (!query) return next();
@@ -36,8 +41,9 @@ function middleware (apiKey) {
     var cb = function (err, profile) {
       if (err) return next();
       if (!profile) return next();
-      console.log('Query: %s, crunchbaseUrl: %s ', query, crunchbaseUrl);
-      if (mergeProfile(profile, query)) {
+      debug('query=%s, crunchbaseUrl=%s ', query, crunchbaseUrl);
+
+      if (accurateName(profile, query, isDomain)) {
         debug('Got CrunchBase company profile for query %s', query);
         extend(true, context, { crunchbase: { company: { api : profile }}});
         details(profile, person);
@@ -56,8 +62,9 @@ function middleware (apiKey) {
       debug('scraping CrunchBase with permalink %s ..', permalink);
       crunchbase.permalink(permalink, namespace, cb);
     } else {
+      isDomain = (query === getDomainQuery(person));
       debug('scraping CrunchBase with query %s ..', query);
-      crunchbase.company(query, cb);
+      crunchbase.company(query, isDomain, cb);
     }
   };
 }
@@ -76,6 +83,7 @@ function details (profile, person) {
     'tags': 'tag_list',
     'employees': 'number_of_employees',
     'category': 'category_code',
+    'website': 'homepage_url',
     'crunchbase.url': 'crunchbase_url',
     'funding': 'total_money_raised',
     'twitter.username': 'twitter_username'
@@ -101,11 +109,12 @@ function details (profile, person) {
  * @param {String} query
  */
 
-function mergeProfile (profile, query) {
-  if (profile.name) {
-    return leaderUtils.accurateTitle(profile.name, query);
+function accurateName (profile, query, isDomain) {
+  if (isDomain && profile.homepage_url) {
+    return query === leaderUtils.getCleanDomain(profile.homepage_url);
+  } else {
+    return profile.name && leaderUtils.accurateTitle(profile.name, query);
   }
-  return false;
 }
 
 /**
@@ -137,4 +146,10 @@ function getSearchTerm (person, context) {
   var domain = leaderUtils.getInterestingDomain(person);
   var companyDomain = leaderUtils.getCompanyDomain(person);
   return companyDomain || domain || company;
+}
+
+function getDomainQuery (person) {
+  var domain = leaderUtils.getInterestingDomain(person);
+  var companyDomain = leaderUtils.getCompanyDomain(person);
+  return companyDomain || domain;
 }

@@ -21,12 +21,12 @@ describe('leader-crunchbase-api', function () {
 
   it('should merge profile if the name is similar', function () {
     var profile = {name: 'Machine Zone, Inc.'};
-    assert(crunchbase.test.mergeProfile(profile, 'MachineZone'));
+    assert(plugin.test.accurateName(profile, 'MachineZone'));
   });
 
   it('should not merge profile if the name is not similar', function () {
     var profile = {name: 'Homes for sale in Franklin TN'};
-    assert(!crunchbase.test.mergeProfile(profile, 'Premier Pacific Group'));
+    assert(!plugin.test.accurateName(profile, 'Premier Pacific Group'));
   });
 
   it('should be able to resolve a valid crunchbase company profile', function (done) {
@@ -62,6 +62,18 @@ describe('leader-crunchbase-api', function () {
       person.company.crunchbase.url.should.equal('http://www.crunchbase.com/company/igate-patni');
       person.company.employees.should.equal(15000);
       person.company.image.should.equal('http://www.crunchbase.com/assets/images/resized/0014/9354/149354v2-max-150x150.jpg');
+      done();
+    });
+  });
+
+  it('should be able to filter a crunchbase url for operator.com', function (done) {
+    var person = { domain: { name: 'operator.com' }};
+    var context = {};
+    crunchbase.fn(person, context, function (err) {
+      if (err) return done(err);
+      console.log(person);
+      assert(person);
+      assert(!person.company);
       done();
     });
   });
