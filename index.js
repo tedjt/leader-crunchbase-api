@@ -101,7 +101,11 @@ function details (profile, person) {
   } else {
     var crunchimage = objCase(profile, 'image.available_sizes[0][1]');
     if (crunchimage) {
-      person.company.image = 'http://www.crunchbase.com/' + crunchimage;
+      if (crunchimage.indexOf('http') === 0) {
+        person.company.image = crunchimage;
+      } else {
+        person.company.image = 'http://www.crunchbase.com/' + crunchimage;
+      }
     }
   }
 
